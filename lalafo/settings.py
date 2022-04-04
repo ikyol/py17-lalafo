@@ -45,7 +45,7 @@ INSTALLED_APPS = [
     'advertisement',
     
     #!labs
-    
+    'rest_framework',
 ]
 
 MIDDLEWARE = [
