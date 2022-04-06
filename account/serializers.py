@@ -9,12 +9,12 @@ class RegistrationSerializer(serializers.Serializer):
     email = serializers.EmailField(required=True)
     password = serializers.CharField(min_length=6, required=True)
     password_confirm = serializers.CharField(min_length=6, required=True)
-    first_name = serializers.CharField(required=True)
+    name = serializers.CharField(required=True)
     last_name = serializers.CharField(required=True)
     
     def validate_email(self, email):
         if User.objects.filter(email=email).exists():
-            raise serializers.ValidationError('This email is already exist')
+            raise serializers.ValidationError('This email is already exists')
         return email
     
     def validate(self, attrs):
@@ -25,10 +25,10 @@ class RegistrationSerializer(serializers.Serializer):
         return attrs
     
     def save(self):
-        data = self.validate_data
+        data = self.validated_data
         user = User.objects.create_user(**data)
         user.set_activation_code()
-        user.send_activation_code()
+        user.send_activation_mail()
 
 class ActivationSerializer(serializers.Serializer):
     email = serializers.EmailField(required=True)
@@ -51,8 +51,25 @@ class ActivationSerializer(serializers.Serializer):
         user.save()
         
 class LoginSerializer(serializers.Serializer):
-    pass
+    email = serializers.EmailField(required=True)
+    password = serializers.CharField(min_length=6, required=True)
+    
+    def validate_email(self, email):
+        if not User.objects.filter(email=email).exists():
+            raise serializers.ValidationError('THis user is not found')
+        return email
 
+    def validate(self, attrs):
+        email = attrs.get('email')
+        password = attrs.get('password')
+        user = User.objects.get(email=email)
+        if not user.check_password(password):
+            raise serializers.ValidationError('Invalid password')
+        if not user.is_active:
+            raise serializers.ValidationError('Account is not active!')
+        attrs['user'] = user
+        return attrs
+        
 
 class ForgotPasswordSerializer(serializers.Serializer):
     pass
@@ -60,3 +77,5 @@ class ForgotPasswordSerializer(serializers.Serializer):
 
 class ChangePasswordSerializer(serializers.Serializer):
     pass
+
+
