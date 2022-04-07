@@ -4,7 +4,7 @@ from .models import *
 
 class ImageSerializer(serializers.ModelSerializer):
     class Meta:
-        models = AdvertisementGallery
+        model = AdvertisementGallery
         fields = ['picture']
 
 
