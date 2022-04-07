@@ -97,6 +97,21 @@ DATABASES = {
 }
 
 
+# DATABASES = {
+#     'default': {
+#         'ENGINE': "django.db.backends.postgresql",
+#         'NAME': "postgres",
+#         'USER': "postgres",
+#         'PASSWORD': "postgres",
+#         'HOST': 'db',
+#         'PORT': 5432
+        
+#     }
+# }
+
+
+
+
 # Password validation
 # https://docs.djangoproject.com/en/4.0/ref/settings/#auth-password-validators
 
@@ -158,5 +173,8 @@ EMAIL_HOST_PASSWORD = config("EMAIL_HOST_PASSWORD")
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework.authentication.TokenAuthentication',
-    ]
+    ],
+
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
+    'PAGE_SIZE': 5
 }

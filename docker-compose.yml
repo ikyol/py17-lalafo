@@ -1,0 +1,37 @@
+version: '3'
+
+services:
+  db:
+    image: postgres
+    container_name: psql
+    volumes:
+      -postgres_data:/var/lib/postgresql/data/
+    environment:
+      - DB_NAME=postgres
+      - DB_USER=postgres
+      - DB_PASSWORD=postgres
+    networks:
+      - web
+
+  web:
+    build: 
+      context: ./
+      dockerfile: Dockerfile
+    container_name: django
+    command: >
+      bash -c "python manage.py makemigrations &&
+               python manage.py migrate &&
+               python manage.py runserver 0.0.0.0:8000"
+    volumes:
+      - .:/app-py17
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+    networks:
+      - web
+
+  
+networks:
+  web:
+    driver: bridge
