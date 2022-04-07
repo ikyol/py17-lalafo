@@ -4,3 +4,4 @@ psycopg2-binary
 pillow
 python-decouple
 django-filter
+drf-yasg==1.20
