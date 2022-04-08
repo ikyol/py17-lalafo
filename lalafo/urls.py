@@ -38,8 +38,8 @@ schema_view = get_schema_view(
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/v1/docs/', schema_view.with_ui()),
-    path('accounts/', include('account.urls')),
-    path('ads/', include('advertisement.urls'))
+    path('api/v1/accounts/', include('account.urls')),
+    path('api/v1/ads/', include('advertisement.urls'))
 ]
 
 if settings.DEBUG:

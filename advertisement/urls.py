@@ -5,7 +5,7 @@ from rest_framework.routers import DefaultRouter
 
 
 router = DefaultRouter()
-router.register('', AdvertisementViewSet)
+router.register('ads', AdvertisementViewSet)
 router.register('categories', CategoryViewSet)
 
 urlpatterns = [
