@@ -1,5 +1,5 @@
 from dataclasses import field
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from rest_framework.viewsets import ModelViewSet
 from advertisement.permissions import IsAuthor
 from .models import *
@@ -61,4 +61,14 @@ class AdvertisementViewSet(ModelViewSet):
             return [IsAuthenticated()]
         elif self.action in ['update', 'partial_update', 'destroy']:
             return [IsAuthor()]
+        return []
+
+
+class CategoryViewSet(ModelViewSet):
+    queryset = Category.objects.all()
+    serializer_class = CategorySerializer
+
+    def get_permissions(self):
+        if self.action == ['create', 'update', 'partial_update', 'destroy']:
+            return [IsAdminUser()]
         return []

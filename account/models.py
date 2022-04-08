@@ -71,3 +71,12 @@ class User(AbstractBaseUser):
             "test@gmail.com",
             [self.email]
         )
+
+    def send_new_password(self, new_password):
+        message = f"Your new password {new_password}"
+        send_mail(
+            "Password",
+            message,
+            "test@gmail.com",
+            [self.email]
+        )

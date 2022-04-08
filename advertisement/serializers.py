@@ -80,3 +80,9 @@ class AdvertisementSerializer(serializers.ModelSerializer):
         representation = super().to_representation(instance)
         representation['images'] = ImageSerializer(instance.images.all(), many=True).data
         return representation
+
+
+class CategorySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Category
+        fields = '__all__'

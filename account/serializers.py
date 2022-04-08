@@ -1,3 +1,4 @@
+import imp
 from rest_framework import serializers
 from django.contrib.auth import get_user_model
 
@@ -72,10 +73,44 @@ class LoginSerializer(serializers.Serializer):
         
 
 class ForgotPasswordSerializer(serializers.Serializer):
-    pass
+    email = serializers.EmailField(required=True)
 
+    def validate_email(self, email):
+        if not User.objects.filter(email=email).exists():
+            raise serializers.ValidationError('Have no user with this email')
+        return email
+
+    def create_new_password(self):
+        from django.utils.crypto import get_random_string
+        email = self.validated_data.get('email')
+        user = User.objects.get(email=email)
+        random_password = get_random_string(8)
+        user.set_password(random_password)
+        user.send_new_password(random_password)
 
 class ChangePasswordSerializer(serializers.Serializer):
-    pass
+    old_password = serializers.CharField(required=True)
+    new_password = serializers.CharField(required=True)
+    password_confirm = serializers.CharField(required=True)
 
 
+    def validate_old_password(self, old_password):
+        print('hello old')
+        user = self.context['request'].user
+        if not user.check_password(old_password):
+            raise serializers.ValidationError('Forgot your password?')
+        return old_password
+
+    def validate(self, attrs):
+        print('hello validate')
+        password1 = attrs.get('new_password')
+        password2 = attrs.get('password_confirm')
+        if password1 != password2:
+            raise serializers.ValidationError('Passwords do not match')
+        return attrs
+
+    def set_new_password(self):
+        print('hello set_pass')
+        user = self.context['request'].user
+        password = self.validated_data.get('new_password')
+        user.set_password(password)
